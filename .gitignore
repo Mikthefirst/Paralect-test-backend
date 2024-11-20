@@ -1,0 +1,15 @@
+.env
+
+node_modules/       
+package-lock.json
+
+.env                
+
+.vscode/          
+
+dist/              
+build/              
+
+.npm/
+        
+pass.txt
