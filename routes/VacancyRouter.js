@@ -1,5 +1,5 @@
 const express = require('express');
-const Vacancy = require('../DB/schema');
+const Vacancy = require('../DB/schemas/Vacancy').Vacancy;
 
 const router = express.Router();
 

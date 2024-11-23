@@ -19,6 +19,6 @@ const vacancySchema = new Schema({
     }
 });
 
-const Vacancy = mongoose.model('Vacancy', vacancySchema);
+//const Vacancy = mongoose.model('Vacancy', vacancySchema);
 
-module.exports = Vacancy;
+module.exports = vacancySchema;

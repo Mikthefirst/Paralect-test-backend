@@ -2,24 +2,24 @@ require('dotenv').config()
 const express = require('express'), app = express();
 
 const db = require('./DB/connect');
-const routes = require('./routes/CrudRoute')
+const routesVacancies = require('./routes/VacancyRouter')
+const routesUsers = require('./routes/UserRouter')
 
 //constants
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 
 //
 //Middleware
 //
-//app.use(bodyParser);
 app.use(express.json());
 
 
 
 //routes
-app.use('/app', routes);
+app.use('/app', routesVacancies);
+app.use('/app', routesUsers);
 
-
-app.listen(3000, () => {
+app.listen(port, () => {
     console.log(`server listening on port ${port}`);
 })
