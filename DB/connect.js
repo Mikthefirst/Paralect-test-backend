@@ -2,12 +2,13 @@ require('dotenv').config()
 const mongoose = require('mongoose');
 const SchemaVacancy = require('./schemas/Vacancy');
 const SchemaUser = require('./schemas/User')
+const SchemaConnection = require('./schemas/Connect');
 
 const uriVacancy = process.env.mongoDBuri;
 const uriUsers = process.env.mongoDBuriUsers;
 
-let VacancyConnection, UserConnection;
-let UserModel, VacancyModel;
+let VacancyConnection, UserConnection, userVacancyConnect;
+let UserModel, VacancyModel, userVacancyModel;
 
 async function connectMongooseVacancy() {
     try {
@@ -35,20 +36,33 @@ async function connectMongooseUsers() {
     }
 }
 
+
+async function connectMongooseUsersVacancies() {
+    try {
+        userVacancyConnect = await mongoose.createConnection(uriUsers, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            dbName: 'connections'
+        });
+        console.log("Connected connectionBox to MongoDB users with Mongoose!");
+    } catch (err) {
+        console.error("MongoDB connectionBox connection error:", err);
+    }
+}
+
 async function initialise() {
     await connectMongooseVacancy();
     await connectMongooseUsers();
+    await connectMongooseUsersVacancies();
 
-    // VacancyConnection = mongoose.model('Vacancy', SchemaVacancy);
-    //UserConnection = mongoose.model('User', SchemaUser);
 
     VacancyModel = VacancyConnection.model('Vacancy', SchemaVacancy);
     UserModel = UserConnection.model('User', SchemaUser);
+    userVacancyModel = userVacancyConnect.model('connections', SchemaConnection);
 
-    //console.log('Vacancy connection:', VacancyConnection)
-    console.log('Vacancy model:', VacancyModel)
     module.exports.User = UserModel;
     module.exports.Vacancy = VacancyModel;
+    module.exports.Connection = userVacancyModel;
 }
 
 initialise();

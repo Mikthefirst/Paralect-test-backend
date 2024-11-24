@@ -4,18 +4,25 @@ const GetUser = require('../DB/connect');
 const router = express.Router();
 const path = require('node:path');
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const dir = path.join(__dirname, '../assets');
-        cb(null, dir);
+
+const storage = multer.memoryStorage();
+
+
+const upload = multer({
+    storage,
+    limits: { fileSize: 2 * 1024 * 1024 }, // 2 MB limit
+    fileFilter: (req, file, cb) => {
+        // Allowed file types
+        const allowedMimeTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+
+        if (!allowedMimeTypes.includes(file.mimetype)) {
+            return cb(new Error('Invalid file type. Only DOC, DOCX, and PDF are allowed.'));
+        }
+
+        cb(null, true); // Accept file
     },
-    filename: function (req, file, cb) {
-        cb(null, `${Date.now()}-${file.originalname}`);
-    }
 });
 
-
-const upload = multer({ storage: storage });
 
 const fields = [
     { name: 'file', maxCount: 1 },
@@ -23,15 +30,15 @@ const fields = [
 
 // Create
 router.post('/AddUser', upload.fields(fields), async (req, res) => {
-    const { username, password, file } = req.body;
-    console.log(req.files.file[0].filename);
+    const { username, password } = req.body, file = req.files.file[0];
     console.log({ username, password, file });
     try {
-        console.log('User:', GetUser);
-        console.log('User.User', GetUser.User)
-        const newUser = new GetUser.User({ username, password, file });
-        await newUser.save();
-        res.send(newUser);
+        if (file && username && password) {
+            const newUser = new GetUser.User({ username, password, file: file.buffer });
+            await newUser.save();
+            res.cookie('username', username);
+            res.send(newUser).status(200);
+        }
     } catch (error) {
         console.error(error);
         res.status(500).send(error);

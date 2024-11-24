@@ -1,5 +1,5 @@
 const express = require('express');
-const Vacancy = require('../DB/schemas/Vacancy').Vacancy;
+let GetVacancy = require('../DB/connect');
 
 const router = express.Router();
 
@@ -9,7 +9,7 @@ router.post('/vacancies', async (req, res) => {
 
     console.log({ Company, Position, SalaryRange, ApplicationStatus, Note });
     try {
-        const newVacancy = new Vacancy({ Company, Position, SalaryRange, ApplicationStatus, Note });
+        const newVacancy = new GetVacancy.Vacancy({ Company, Position, SalaryRange, ApplicationStatus, Note });
         await newVacancy.save();
         res.send(newVacancy);
     } catch (error) {
@@ -21,7 +21,7 @@ router.post('/vacancies', async (req, res) => {
 // Get All
 router.get('/Vacancies', async (req, res) => {
     try {
-        const jobs = await Vacancy.find({});
+        const jobs = await GetVacancy.Vacancy.find({});
         res.send(jobs);
     } catch (error) {
         console.error(error);
@@ -35,7 +35,7 @@ router.put('/Vacancies/:id', async (req, res) => {
     const { company, position, salaryRange, status, note } = req.body;
 
     try {
-        const updateVacancy = await Vacancy.findByIdAndUpdate(id, { company, position, salaryRange, status, note }, { new: true });
+        const updateVacancy = await GetVacancy.Vacancy.findByIdAndUpdate(id, { company, position, salaryRange, status, note }, { new: true });
         res.send(updateVacancy);
     } catch (error) {
         console.error(error);
@@ -48,7 +48,7 @@ router.delete('/Vacancies/:id', async (req, res) => {
     const { id } = req.params;
     console.log(id);
     try {
-        const deleteVacancy = await Vacancy.findByIdAndDelete(id);
+        const deleteVacancy = await GetVacancy.Vacancy.findByIdAndDelete(id);
         res.send(deleteVacancy);
     } catch (error) {
         console.error(error);
