@@ -22,6 +22,7 @@ router.post('/vacancies', async (req, res) => {
 router.get('/Vacancies', async (req, res) => {
     try {
         const jobs = await GetVacancy.Vacancy.find({});
+        console.log('fetch was');
         res.send(jobs);
     } catch (error) {
         console.error(error);
@@ -30,12 +31,12 @@ router.get('/Vacancies', async (req, res) => {
 });
 
 // Update 
-router.put('/Vacancies/:id', async (req, res) => {
-    const { id } = req.params;
-    const { company, position, salaryRange, status, note } = req.body;
-
+router.put('/Vacancies/', async (req, res) => {
+    const { Company, Position, SalaryRange, ApplicationStatus, Note, id } = req.body;
+    console.log('Change vacancy');
+    console.log('info:', { Company, Position, SalaryRange, ApplicationStatus, Note, id })
     try {
-        const updateVacancy = await GetVacancy.Vacancy.findByIdAndUpdate(id, { company, position, salaryRange, status, note }, { new: true });
+        const updateVacancy = await GetVacancy.Vacancy.findByIdAndUpdate(id, { Company, Position, SalaryRange, ApplicationStatus, Note }, { new: true });
         res.send(updateVacancy);
     } catch (error) {
         console.error(error);
@@ -47,6 +48,7 @@ router.put('/Vacancies/:id', async (req, res) => {
 router.delete('/Vacancies/:id', async (req, res) => {
     const { id } = req.params;
     console.log(id);
+    console.log('DElete vacancy');
     try {
         const deleteVacancy = await GetVacancy.Vacancy.findByIdAndDelete(id);
         res.send(deleteVacancy);
